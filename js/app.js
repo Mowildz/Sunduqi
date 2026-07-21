@@ -26,7 +26,7 @@ const render = (html) => (el("app").innerHTML = html);
 async function cekLogin() {
     const {
         data: { user },
-    } = await supabase.auth.getUser();
+    } = await supabaseClient.auth.getUser();
     if (user) {
         const { data } = await supabase
             .from("pengguna")
@@ -91,7 +91,7 @@ async function aksiLogin() {
     const u = el("username").value.trim();
     const p = el("password").value;
     el("errLogin").classList.add("hidden");
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabaseClient.auth.signInWithPassword({
         email: u + "@santri.app",
         password: p,
     });
@@ -178,7 +178,7 @@ function statCard(icon, label, nilai, grad) {
 async function tambahMusyrif() {
     const nama = prompt("✨ Masukkan NAMA LENGKAP Musyrif baru:");
     if (!nama) return;
-    const { data, error } = await supabase.rpc(
+    const { data, error } = await supabaseClient.rpc(
         "tambah_musyrif_baru",
         { nama_musyrif: nama },
     );
@@ -206,7 +206,7 @@ async function hapusMusyrif(id) {
     // For now, delete from 'pengguna' might be enough if it cascades. But auth.users doesn't cascade FROM pengguna.
     // However, deleting from pengguna will remove their access. 
     // I'll keep the delete pengguna part.
-    await supabase.from("pengguna").delete().eq("id", id);
+    await supabaseClient.from("pengguna").delete().eq("id", id);
     ruteHalaman();
 }
 
@@ -278,7 +278,7 @@ async function tambahSantri() {
     const nim =
         prompt("Nomor Induk Santri:") ||
         "SN" + Date.now().toString().slice(-6);
-    const { error } = await supabase.from("santri").insert({
+    const { error } = await supabaseClient.from("santri").insert({
         musyrif_id: state.user.id,
         nama,
         kelas,
@@ -455,7 +455,7 @@ async function simpanTrx() {
     if (saldoBaru < 0) return alert("❌ Saldo tidak cukup!");
 
     // Eksekusi transaksi
-    const { error: errTrx } = await supabase.from("transaksi").insert({
+    const { error: errTrx } = await supabaseClient.from("transaksi").insert({
         santri_id: s.id,
         jenis: jenisTrxAktif,
         kategori: kat,
@@ -502,7 +502,7 @@ async function hapusTrx(id) {
     
     if (saldoBaru < 0) return alert("❌ Gagal menghapus, saldo akan menjadi minus!");
 
-    const { error: errDel } = await supabase.from("transaksi").delete().eq("id", id);
+    const { error: errDel } = await supabaseClient.from("transaksi").delete().eq("id", id);
     if (errDel) return alert("❌ Gagal menghapus transaksi.");
     
     await supabase
@@ -523,7 +523,7 @@ function kembaliMusyrif() {
     ruteHalaman();
 }
 async function logout() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     state = { user: null, peran: null, halaman: "login" };
     ruteHalaman();
 }

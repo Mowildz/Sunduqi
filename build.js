@@ -13,7 +13,7 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'sb_publishable_BaiXJ3B
 const configContent = `
 const SUPABASE_URL = "${supabaseUrl}";
 const SUPABASE_ANON_KEY = "${supabaseAnonKey}";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 `;
 
 fs.writeFileSync(path.join(jsDir, 'config.js'), configContent.trim());
