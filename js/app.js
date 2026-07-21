@@ -28,7 +28,7 @@ async function cekLogin() {
         data: { user },
     } = await supabaseClient.auth.getUser();
     if (user) {
-        const { data } = await supabase
+        const { data } = await supabaseClient
             .from("pengguna")
             .select("*")
             .eq("id", user.id)
@@ -106,7 +106,7 @@ async function aksiLogin() {
 
 // ===================== HALAMAN ADMIN =====================
 async function halamanAdmin() {
-    const { data: musyrif } = await supabase
+    const { data: musyrif } = await supabaseClient
         .from("pengguna")
         .select("*")
         .eq("peran", "musyrif")
@@ -212,7 +212,7 @@ async function hapusMusyrif(id) {
 
 // ===================== HALAMAN MUSYRIF =====================
 async function halamanMusyrif() {
-    const { data: santri } = await supabase
+    const { data: santri } = await supabaseClient
         .from("santri")
         .select("*")
         .eq("musyrif_id", state.user.id)
@@ -298,7 +298,7 @@ function bukaSantri(id) {
 // ===================== HALAMAN DETAIL SANTRI =====================
 async function halamanDetailSantri() {
     const s = state.santriAktif;
-    const { data: trx } = await supabase
+    const { data: trx } = await supabaseClient
         .from("transaksi")
         .select("*")
         .eq("santri_id", s.id)
@@ -467,7 +467,7 @@ async function simpanTrx() {
         return alert("❌ Gagal menyimpan transaksi: " + errTrx.message);
     }
 
-    const { error: errSaldo } = await supabase
+    const { error: errSaldo } = await supabaseClient
         .from("santri")
         .update({ saldo: saldoBaru })
         .eq("id", s.id);
@@ -489,7 +489,7 @@ async function hapusTrx(id) {
         )
     )
         return;
-    const { data: t, error: errGet } = await supabase
+    const { data: t, error: errGet } = await supabaseClient
         .from("transaksi")
         .select("*")
         .eq("id", id)
@@ -505,7 +505,7 @@ async function hapusTrx(id) {
     const { error: errDel } = await supabaseClient.from("transaksi").delete().eq("id", id);
     if (errDel) return alert("❌ Gagal menghapus transaksi.");
     
-    await supabase
+    await supabaseClient
         .from("santri")
         .update({ saldo: saldoBaru })
         .eq("id", state.santriAktif.id);
